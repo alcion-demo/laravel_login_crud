@@ -20,8 +20,8 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('todos.create')" :active="request()->routeIs('todos.create')">
-                        {{ __('新規登録') }}
+                    <x-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.index')">
+                        {{ __('予定表') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

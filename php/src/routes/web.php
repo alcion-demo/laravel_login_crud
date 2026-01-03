@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Todo\TodoController;
+use App\Http\Controllers\Calendar\CalendarController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -26,4 +27,5 @@ Route::prefix('auth')->group(function(){
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::resource('todos', TodoController::class);
+    Route::resource('calendar', CalendarController::class);
 });

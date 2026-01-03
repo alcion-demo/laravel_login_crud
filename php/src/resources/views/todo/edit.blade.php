@@ -13,7 +13,7 @@ use App\Enums\TodoPriority;
                 <form method="POST" action="{{ url('todos/' . $todo->id) }}">
                     @csrf
                     @method('PUT')
-
+                    <input type="hidden" name="previous_url" value="{{ request('previous_url') }}">
                     <!-- タイトル -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2">タイトル</label>
@@ -58,6 +58,23 @@ use App\Enums\TodoPriority;
                         @enderror
                     </div>
 
+                    <div class="flex gap-2">
+                        <div>
+                            <x-input-label>開始時刻</x-input-label>
+                            <input type="time" name="start_time" class="border rounded p-2 w-full"value="{{ old('start_time') }}"/>
+                            @error('start_time')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <x-input-label>終了時刻</x-input-label>
+                            <input type="time" name="end_time" class="border rounded p-2 w-full" value="{{ old('end_time') }}"/>
+                            @error('end_time')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- 優先度 -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2">優先度</label>
@@ -91,7 +108,7 @@ use App\Enums\TodoPriority;
                             更新
                         </button>
                         <!-- 戻るボタン -->
-                        <a href="{{ url('todos') }}" class="inline-block bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        <a href="{{ request('previous_url', url('todos')) }}" class="inline-block bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                             戻る
                         </a>
                     </div>

@@ -15,7 +15,7 @@ class Todo extends Model
     ];
 
     protected $fillable = [
-        'title', 'detail', 'status', 'priority', 'deadline', 'user_id',
+        'title', 'detail', 'status', 'priority', 'deadline', 'user_id', 'start_time', 'end_time'
     ];
 
     /**
@@ -63,10 +63,11 @@ class Todo extends Model
      *
      * @param string $id
      * @return \App\Models\Todo
-     */ 
+     */
     public function findEditId(string $id)
     {
-        $loginId = $this->find($id); return $loginId;
+        $loginId = $this->find($id);
+        return $loginId;
     }
     /**
      * Todoを保存する
@@ -81,6 +82,8 @@ class Todo extends Model
             'user_id' => auth()->user()->id,
             'detail' => $request->input('detail'),
             'deadline' => $request->input('deadline'),
+            'start_time' => $request->input('start_time'),
+            'end_time'   => $request->input('end_time'),
         ]);
 
         return $todo;
@@ -114,6 +117,8 @@ class Todo extends Model
             'status'   => $data['status'] ?? $this->status,
             'deadline' => $data['deadline'] ?? $this->deadline,
             'priority' => $data['priority'] ?? $this->priority,
+            'start_time' => $data['start_time'] ?? $this->start_time,
+            'end_time'   => $data['end_time'] ?? $this->end_time,
         ]);
 
         // タグ配列を取得（空文字は除去）
@@ -161,4 +166,38 @@ class Todo extends Model
 
         return $this;
     }
+
+    /**
+     * 指定月のスケジュール取得
+     * @param Carbon $currentDate
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function gettodosForMonth(Carbon $currentDate)
+    {
+        $todos = $this->where('user_id', auth()->id())
+        ->whereMonth('deadline', $currentDate->month)
+        ->whereYear('deadline', $currentDate->year)
+        ->get()
+        ->groupBy('deadline');
+        return $todos;
+    }
+
+    /**
+     * 本日の予定取得
+     * @return array{today: \Carbon\Carbon, events: \Illuminate\Support\Collection}
+     */
+    public function todaySchedule() {
+        $today = Carbon::today();
+        $events = $this->where('user_id', auth()->id())
+        ->whereDate('deadline', $today)
+        ->with('user')
+        ->orderBy('deadline', 'asc')
+        ->get();
+
+        return [
+            'today' => $today,
+            'events' => $events,
+        ];
+    }
+
 }

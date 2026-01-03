@@ -30,6 +30,8 @@ class UpdateTodo extends FormRequest
             'title' => 'required|max:20',
             'detail' => 'required|max:300',
             'deadline' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i|required_with:end_time',
+            'end_time' => 'nullable|date_format:H:i|required_with:start_time|after:start_time',
             'status' => 'required|in:' . implode(',', array_keys(TodoStatus::toSelectArray())),
             'priority' => 'required|in:' . implode(',', array_keys(TodoPriority::toSelectArray())),
             'tag_name' => 'nullable|string',
@@ -50,6 +52,8 @@ class UpdateTodo extends FormRequest
             'status' => '状態',
             'priority' => '優先度',
             'tag_name' => 'タグ',
+            'start_time' => '開始時刻',
+            'end_time' => '終了時刻',
         ];
     }
 
@@ -65,6 +69,9 @@ class UpdateTodo extends FormRequest
 
         return [
             'status.in' => ':attribute には ' . $statusLabels . ' のいずれかを指定してください。',
+            'start_time.required_with' => '終了時刻を入力する場合は、開始時刻も入力してください。',
+            'end_time.required_with'   => '開始時刻を入力する場合は、終了時刻も入力してください。',
+            'end_time.after_or_equal' => '終了時刻は開始時刻より後にしてください。',
         ];
     }
 }

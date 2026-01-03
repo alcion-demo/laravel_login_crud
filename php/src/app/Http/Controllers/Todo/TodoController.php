@@ -10,9 +10,13 @@ use App\Models\Tag;
 use App\Http\Requests\Todo\StoreTodo;
 use App\Http\Requests\Todo\UpdateTodo;
 use Illuminate\Pagination\Paginator;
+use App\Services\DateKeywordParser;
 
 class TodoController extends Controller
 {
+    /**
+     * __construct
+     */
     public function __construct(protected Todo $todo, protected Tag $tag)
     {
         // $this->imageService = $imageService;
@@ -21,19 +25,38 @@ class TodoController extends Controller
      * Todo一覧表示
      * @return view
      */
-    public function index()
+    public function index(Request $request, DateKeywordParser $dateParser)
     {
-        $todos = $this->todo->findUserId()->paginate(10);
-        return view('todo.index', compact('todos'));
+        $keyword = trim($request->query('keyword'));
+
+        $todos = $this->todo->query()
+            ->when($keyword, function ($query) use ($keyword, $dateParser) {
+                $query->where(function ($q) use ($keyword, $dateParser) {
+
+                    $q->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('detail', 'like', "%{$keyword}%");
+
+                    // 日付検索
+                    if ($date = $dateParser->parse($keyword)) {
+                        $q->orWhereDate('deadline', $date);
+                    }
+                });
+            })
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('todo.index', compact('todos', 'keyword'));
     }
 
     /**
      * 新規作成画面表示
      * @return view
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('todo.create');
+        $selectedDate = $request->query('date', now()->format('Y-m-d'));
+
+        return view('todo.create', compact('selectedDate'));
     }
 
     /**
@@ -44,11 +67,19 @@ class TodoController extends Controller
     public function store(StoreTodo $request)
     {
         $validated = $request->validated();
-        $todo = $this->todo->storeTodoList($request);
-        $tag = $this->tag->storeTag($request);
-        $todo->AttachTag($tag);
+        $todo = $this->todo->storeTodolist($request); 
 
-        return redirect('todos')->with('status', 'Todoを登録しました!');
+        if ($request->filled('tags')) {
+            $tagNames = explode(',', $request->input('tags')); 
+            foreach ($tagNames as $name) {
+                $tag = Tag::firstOrCreate(['tag_name' => trim($name)]);
+                $todo->tags()->attach($tag->id);
+            }
+        }
+
+        $redirectUrl = $request->input('previous_url') ?: url('todos');
+
+        return redirect()->to($redirectUrl)->with('status', 'Todoを登録しました!');
     }
 
     /**
@@ -89,7 +120,9 @@ class TodoController extends Controller
         $todo = $this->todo->findEditId($id);
         $todo->updateTodolist(array_merge($validated, ['tags' => $tags]));
 
-        return redirect('todos')->with('status', 'Todoを更新しました!');
+        $redirectUrl = $request->input('previous_url') ?: route('todos.index');
+
+        return redirect()->to($redirectUrl)->with('status', '更新しました');
     }
 
     /**
