@@ -4,20 +4,29 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
+    <div class="bg-white rounded-2xl shadow p-6 mb-6 mt-4">
+        <h3 class="text-lg font-semibold mb-3">
+            📅 今日（{{ $today->format('Y年m月d日') }}）の予定
+        </h3>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-
-                <!-- CRUDリンク -->
-                <div class="p-6 text-gray-900 space-x-4">
-                    <a href="{{ route('todos.index') }}" class="text-blue-600 hover:underline">Todo 一覧</a>
-                    <a href="{{ route('todos.create') }}" class="text-green-600 hover:underline">Todo 作成</a>
-                </div>
-            </div>
-        </div>
+        @if($todaySchedules->isEmpty())
+            <p class="text-gray-500">本日の予定はありません。</p>
+        @else
+            <ul class="space-y-2">
+                @foreach($todaySchedules as $schedule)
+                    <li class="border-b pb-2">
+                        <p class="font-medium text-gray-800">
+                            {{ $schedule->title }}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            {{ $schedule->start_time }} 〜 {{ $schedule->end_time }}
+                        </p>
+                        @if($schedule->memo)
+                            <p class="text-sm text-gray-500">{{ $schedule->memo }}</p>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </x-app>
