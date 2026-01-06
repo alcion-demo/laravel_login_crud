@@ -61,14 +61,14 @@ use App\Enums\TodoPriority;
                     <div class="flex gap-2">
                         <div>
                             <x-input-label>開始時刻</x-input-label>
-                            <input type="time" name="start_time" class="border rounded p-2 w-full"value="{{ old('start_time') }}"/>
+                            <input type="time" name="start_time" class="border rounded p-2 w-full"value="{{ old('start_time', $todo->start_time ? substr($todo->start_time, 0, 5) : '') }}"/>
                             @error('start_time')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
                             <x-input-label>終了時刻</x-input-label>
-                            <input type="time" name="end_time" class="border rounded p-2 w-full" value="{{ old('end_time') }}"/>
+                            <input type="time" name="end_time" class="border rounded p-2 w-full" value="{{ old('end_time', $todo->end_time ? substr($todo->end_time, 0, 5) : '') }}"/>
                             @error('end_time')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
