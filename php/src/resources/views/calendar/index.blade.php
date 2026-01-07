@@ -3,7 +3,7 @@ use App\Enums\Weekday;
 use Carbon\Carbon;
 @endphp
 
-<x-app>
+<x-admin-app>
     <div class="max-w-7xl mx-auto">
         {{-- ヘッダー：タイトルと年月ナビ --}}
         <div class="flex items-center justify-between mb-8">
@@ -157,4 +157,4 @@ use Carbon\Carbon;
             </div>
         </div>
     </div>
-</x-app>
+</x-admin-app>

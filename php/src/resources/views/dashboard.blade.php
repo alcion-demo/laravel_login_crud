@@ -1,4 +1,4 @@
-<x-app>
+<x-admin-app>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
@@ -18,9 +18,11 @@
                         <p class="font-medium text-gray-800">
                             {{ $schedule->title }}
                         </p>
-                        <p class="text-sm text-gray-600">
-                            {{ $schedule->start_time }} 〜 {{ $schedule->end_time }}
-                        </p>
+                        @if($schedule->start_time && $schedule->end_time)
+                            <p class="text-sm text-gray-600">
+                                {{ $schedule->start_time }} 〜 {{ $schedule->end_time }}
+                            </p>
+                        @endif
                         @if($schedule->memo)
                             <p class="text-sm text-gray-500">{{ $schedule->memo }}</p>
                         @endif
@@ -29,4 +31,4 @@
             </ul>
         @endif
     </div>
-</x-app>
+</x-admin-app>

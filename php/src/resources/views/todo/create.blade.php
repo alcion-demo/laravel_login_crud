@@ -1,4 +1,4 @@
-<x-app>
+<x-admin-app>
     <x-slot name="title">
     登録画面
     </x-slot>
@@ -66,4 +66,4 @@
         </form>
     </div>
 
-</x-app>
+</x-admin-app>

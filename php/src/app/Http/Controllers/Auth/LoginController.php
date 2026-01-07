@@ -29,6 +29,10 @@ class LoginController extends Controller
             // 認証に成功したら、セッションを再生成する
             $request->session()->regenerate();
 
+            if (Auth::user()->is_admin) {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
             // ダッシュボードにリダイレクトする
             return redirect()->intended('dashboard');
         }
