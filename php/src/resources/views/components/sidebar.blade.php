@@ -36,14 +36,6 @@
                         </a>
                     @endif
                     {{-- <nav class="flex-1 px-2 py-4 space-y-2"> --}}
-                    <a href="{{ route('post.index') }}"
-                    class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('post.index') ? 'bg-zinc-200 dark:bg-zinc-700' : '' }}">
-                    投稿一覧
-                    </a>
-                    <a href="{{ route('post.create') }}"
-                    class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('post.create') ? 'bg-zinc-200 dark:bg-zinc-700' : '' }}">
-                    投稿作成
-                    </a>
                     <a href="{{ route('calendar.index') }}"
                     class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('calendar.index') ? 'bg-zinc-200 dark:bg-zinc-700' : '' }}">
                     予定表
@@ -51,9 +43,7 @@
             </nav>
             <div class="mt-auto p-4">
                 <div class="mt-2">
-                    <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-md text-sm hover:bg-zinc-200 dark:hover:bg-zinc-700">
-                        個人情報変更
-                    </a>
+
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

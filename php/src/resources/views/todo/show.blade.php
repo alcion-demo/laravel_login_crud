@@ -3,7 +3,7 @@
     use App\Enums\TodoPriority;
 @endphp
 
-<x-app>
+<x-admin-app>
     <x-slot name="title">
         詳細画面
     </x-slot>
@@ -94,4 +94,4 @@
             </div>
         </div>
     </div>
-</x-app>
+</x-admin-app>

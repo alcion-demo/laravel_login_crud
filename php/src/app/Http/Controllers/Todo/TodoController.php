@@ -29,21 +29,25 @@ class TodoController extends Controller
     {
         $keyword = trim($request->query('keyword'));
 
-        $todos = $this->todo->query()
-            ->when($keyword, function ($query) use ($keyword, $dateParser) {
-                $query->where(function ($q) use ($keyword, $dateParser) {
+        $todosQuery = $this->todo->query();
 
-                    $q->where('title', 'like', "%{$keyword}%")
-                    ->orWhere('detail', 'like', "%{$keyword}%");
+        if (!auth()->user()->is_admin) {
+            $todosQuery->where('user_id', auth()->id());
+        }
 
-                    // 日付検索
-                    if ($date = $dateParser->parse($keyword)) {
-                        $q->orWhereDate('deadline', $date);
-                    }
-                });
-            })
-            ->paginate(10)
-            ->withQueryString();
+        // 検索条件を追加
+        $todosQuery->when($keyword, function ($query) use ($keyword, $dateParser) {
+            $query->where(function ($q) use ($keyword, $dateParser) {
+                $q->where('title', 'like', "%{$keyword}%")
+                ->orWhere('detail', 'like', "%{$keyword}%");
+
+                if ($date = $dateParser->parse($keyword)) {
+                    $q->orWhereDate('deadline', $date);
+                }
+            });
+        });
+
+        $todos = $todosQuery->paginate(10)->withQueryString();
 
         return view('todo.index', compact('todos', 'keyword'));
     }

@@ -3,94 +3,79 @@ use App\Enums\TodoStatus;
 use App\Enums\TodoPriority;
 @endphp
 
-<x-app>
-    <x-slot name="title">
-        一覧画面
-    </x-slot>
-    <x-message type="status" />
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between mb-4">
-                <!-- 登録ボタン（左） -->
-                <x-button class="bg-green-500 text-white hover:bg-green-600">
+<x-admin-app>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <x-message type="status" />
+
+        <div class="py-6">
+            {{-- ヘッダー：検索とボタンの配置 --}}
+            <div class="flex items-center justify-between mb-6">
+                <x-button class="bg-green-500 text-white hover:bg-green-600 rounded-lg">
                     <a href="{{ url('todos/create') }}">登録</a>
                 </x-button>
 
-                <!-- 検索フォーム（右） -->
                 <form method="GET" action="{{ route('todos.index') }}" class="flex items-center space-x-2">
-                    <input
-                        type="text"
-                        name="keyword"
-                        value="{{ request('keyword') }}"
-                        placeholder="キーワード / 1/3 など"
-                        class="border border-gray-300 rounded px-3 py-2 text-sm w-64"
-                    >
-                    <x-button type="submit" class="bg-gray-500 text-white hover:bg-gray-600">
+                    <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="キーワード検索..."
+                        class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-64 focus:ring-blue-500 focus:border-blue-500">
+                    <x-button type="submit" class="bg-gray-500 text-white hover:bg-gray-600 rounded-lg">
                         検索
                     </x-button>
                     @if(!empty(request('keyword')))
-                        <a href="{{ route('todos.index') }}"
-                        class="px-3 py-2 border rounded text-gray-600 hover:bg-gray-100">
+                        <a href="{{ route('todos.index') }}" class="px-3 py-2 border rounded-lg text-gray-600 hover:bg-gray-100 text-sm">
                             クリア
                         </a>
                     @endif
                 </form>
             </div>
-            <!-- Todo 一覧 -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200">
-                    <thead class="bg-gray-100">
+
+            {{-- ★修正ポイント：テーブルの角を丸くし、フォントを整える --}}
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left">タイトル</th>
-                            <th class="px-4 py-2 text-left">詳細</th>
-                            <th class="px-4 py-2 text-left">状態</th>
-                            <th class="px-4 py-2 text-left">期限日・時間</th>
-                            <th class="px-4 py-2 text-left">優先度</th>
-                            <th class="px-4 py-2 text-left">タグ</th>
-                            <th class="px-4 py-2"></th>
-                            <th class="px-4 py-2"></th>
-                            <th class="px-4 py-2"></th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">タイトル</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">状態</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">期限</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">優先度</th>
+                            <th class="px-4 py-3 text-center font-bold text-gray-600" colspan="3">操作</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white divide-y divide-gray-100">
                         @foreach($todos as $todo)
-                            <tr class="border-t">
-                                <td class="px-4 py-2">{{ $todo->title }}</td>
-                                <td class="px-4 py-2">{{ Str::limit($todo->detail, 30, '...') }}</td>
-                                <td class="px-4 py-2">
-                                    <span class="px-2 py-1 rounded {{ TodoStatus::getStatusColor($todo->status) }}">
-                                        {{ TodoStatus::labelForValue($todo->status) }}
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-4 py-4">
+                                    <div class="font-bold text-gray-900">{{ $todo->title }}</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">{{ Str::limit($todo->detail, 30, '...') }}</div>
+                                </td>
+                                <td class="px-4 py-4">
+                                    {{-- エラー回避のため int 変換して渡す --}}
+                                    <span class="px-2 py-1 rounded-md text-xs font-bold {{ TodoStatus::getStatusColor((int)$todo->status) }}">
+                                        {{ TodoStatus::labelForValue((int)$todo->status) }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2">
-                                    <div>{{ $todo->formatted_deadline }}</div>
-                                    @if($todo->start_time)
-                                        <div class="text-xs text-gray-500">
-                                            {{ substr($todo->start_time, 0, 5) }} 〜 {{ substr($todo->end_time, 0, 5) }}
-                                        </div>
-                                    @endif
+                                <td class="px-4 py-4 text-gray-600">
+                                    {{ $todo->formatted_deadline }}
                                 </td>
-                                <td class="px-4 py-2">{{ TodoPriority::labelForValue($todo->priority) }}</td>
-                                <td class="px-4 py-2">
-                                    @foreach ($todo->tags as $tag)
-                                        <span class="px-2 py-1 rounded mr-1">{{ $tag->tag_name }}</span>
-                                    @endforeach
+                                <td class="px-4 py-4 text-gray-600">
+                                    {{ TodoPriority::labelForValue((int)$todo->priority) }}
                                 </td>
-                                <td class="px-4 py-2">
-                                    <x-button class="bg-blue-500 text-white hover:bg-blue-600">
+                                
+                                {{-- 操作ボタン（元のボタンを維持） --}}
+                                <td class="px-2 py-4 text-right">
+                                    <x-button class="bg-blue-500 text-white hover:bg-blue-600 text-xs rounded-md">
                                         <a href="{{ url('todos/' . $todo->id) }}">詳細</a>
                                     </x-button>
                                 </td>
-                                <td class="px-4 py-2">
-                                    <x-button class="bg-indigo-500 text-white hover:bg-indigo-600">
+                                <td class="px-2 py-4 text-right">
+                                    <x-button class="bg-indigo-500 text-white hover:bg-indigo-600 text-xs rounded-md">
                                         <a href="{{ url('todos/' . $todo->id . '/edit') }}">編集</a>
                                     </x-button>
                                 </td>
-                                <td class="px-4 py-2">
-                                    <form method="POST" action="{{ url('todos/' . $todo->id) }}">
+                                <td class="px-2 py-4 text-right pr-4">
+                                    <form method="POST" action="{{ url('todos/' . $todo->id) }}" onsubmit="return confirm('削除しますか？')">
                                         @csrf
                                         @method('DELETE')
-                                        <x-button type="submit" class="bg-red-500 text-white hover:bg-red-600">
+                                        <x-button type="submit" class="bg-red-500 text-white hover:bg-red-600 text-xs rounded-md">
                                             削除
                                         </x-button>
                                     </form>
@@ -101,10 +86,9 @@ use App\Enums\TodoPriority;
                 </table>
             </div>
 
-            <!-- ページネーション -->
-            <div class="mt-4">
+            <div class="mt-6">
                 {{ $todos->links('vendor.pagination.tailwind2') }}
             </div>
         </div>
     </div>
-</x-app>
+</x-admin-app>

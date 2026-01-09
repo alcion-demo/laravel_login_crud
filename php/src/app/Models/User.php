@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar_path',
+        'is_admin',
     ];
 
     /**
@@ -44,5 +47,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * ユーザー一覧検索
+     * @param request $request
+     * @return \App\Models\User
+     */
+    public function userList($request) {
+        $query = $this->query();
+
+        if (!empty($request)) {
+            // 検索条件を ( ) で囲むように修正（grouping）
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'LIKE', "%{$request}%")
+                  ->orWhere('email', 'LIKE', "%{$request}%");
+            });
+        }
+
+        $users = $query->latest()->paginate(25);
+
+        return $users;
+    }
+
+    public function todos(): HasMany
+    {
+        return $this->hasMany(Todo::class);
     }
 }
