@@ -11,9 +11,12 @@ use App\Http\Requests\Todo\StoreTodo;
 use App\Http\Requests\Todo\UpdateTodo;
 use Illuminate\Pagination\Paginator;
 use App\Services\DateKeywordParser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TodoController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * __construct
      */
@@ -94,6 +97,7 @@ class TodoController extends Controller
     public function show(string $id)
     {
         $todo = $this->todo->findEditId($id);
+        $this->authorize('view', $todo);
 
         return view('todo.show', compact('todo'));
     }
@@ -122,6 +126,7 @@ class TodoController extends Controller
         $tags = $request->input('tags', []);
 
         $todo = $this->todo->findEditId($id);
+        $this->authorize('update', $todo);
         $todo->updateTodolist(array_merge($validated, ['tags' => $tags]));
 
         $redirectUrl = $request->input('previous_url') ?: route('todos.index');
@@ -136,7 +141,9 @@ class TodoController extends Controller
      */
     public function destroy(string $id)
     {
+
         $todo = $this->todo->findEditId($id);
+        $this->authorize('delete', $todo);
         $todo->DeleteTodolist();
         return redirect()
             ->route('todos.index')

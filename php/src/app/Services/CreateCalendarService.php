@@ -71,7 +71,7 @@ class CreateCalendarService
         }
 
         /** 月末余白計算 */
-        $lastblank = WEEKDAY::WEEKDAYS - count($week);
+        $lastblank = Weekday::WEEKDAYS - count($week);
         if (!($startWeek == Weekday::SUN->value && $lastweekday == Weekday::SAT->value || $startWeek == Weekday::MON->value && $lastweekday == Weekday::SUN->value)) {
             for ($i = 0; $i < $lastblank; $i++) {
                 $weekdayIndex = ($startWeek + count($week)) % Weekday::WEEKDAYS;

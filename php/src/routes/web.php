@@ -29,6 +29,7 @@ Route::prefix('auth')->group(function(){
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
 });
 
 Route::middleware(['auth','admin'])->prefix('admin')->name('admin.')->group(function () {

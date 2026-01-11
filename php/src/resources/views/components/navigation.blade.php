@@ -7,6 +7,13 @@
                     <div class="shrink-0 flex items-center mr-10">
                         <x-application-logo class="block h-10 w-auto fill-current text-[#004A3E]" />
                     </div>
+                @else
+                    {{-- ヘッダー用の小さなデフォルトアイコン --}}
+                    <div class="h-8 w-8 rounded-full mr-2 border border-gray-200 bg-gray-100 flex items-center justify-center">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
                 @endif
 
                 <div class="hidden sm:flex sm:space-x-8 sm:-my-px items-center h-16">
@@ -32,9 +39,16 @@
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" type="button"
                         class="inline-flex items-center justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-                        @if(!Auth::user()->is_admin)
-                            <img src="{{ Auth::user()->avatar_path ? asset('storage/' . Auth::user()->avatar_path) : asset('images/default-avatar.png') }}" 
-                                    class="h-8 w-8 rounded-full mr-2 object-cover border border-gray-200">
+                        @if(Auth::user()->avatar_path)
+                            <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" 
+                                class="h-8 w-8 rounded-full mr-2 object-cover border border-gray-200">
+                        @else
+                            {{-- ヘッダー用の小さなデフォルトアイコン --}}
+                            <div class="h-8 w-8 rounded-full mr-2 border border-gray-200 bg-gray-100 flex items-center justify-center">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
                         @endif
                         {{ Auth::user()->name }}
                         <svg class="ml-2 h-5 w-5 transition-transform duration-200" :class="{'rotate-180': open}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Http\Requests\Auth\LoginRequest;
 
 class LoginController extends Controller
 {
@@ -18,28 +19,21 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        // 1. LoginRequest 内の authenticate() を実行（バリデーションと認証試行を同時に行う）
+        $request->authenticate();
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            // 認証に成功したら、セッションを再生成する
-            $request->session()->regenerate();
+        // 2. 認証に成功したら、セッションを再生成する
+        $request->session()->regenerate();
 
-            if (Auth::user()->is_admin) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-
-            // ダッシュボードにリダイレクトする
-            return redirect()->intended('dashboard');
+        // 3. 管理者判定
+        if (Auth::user()->is_admin) {
+            return redirect()->intended(route('admin.dashboard'));
         }
 
-        return back()->withErrors([
-            'email' => 'ログイン情報が正しくありません。',
-        ])->onlyInput('email');
+        // 4. ダッシュボードにリダイレクトする
+        return redirect()->intended('dashboard');
     }
 
     public function destroy(Request $request)

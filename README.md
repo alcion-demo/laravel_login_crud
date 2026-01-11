@@ -37,6 +37,7 @@ Laravel 12 を用いて開発した **Todo 管理 + 月次カレンダー表示�
 | **Backend** | Laravel 12, PHP_CodeSniffer, Debugbar |
 | **Frontend** | Blade, Tailwind CSS, Alpine.js |
 | **Infrastructure** | Docker Compose (App / Node / MySQL / Nginx) |
+| **Testing** | Pest (Feature & Unit Testing) |
 | **OS Environment** | WSL2 (Ubuntu / Alpine Linux) |
 | **Database** | MySQL 8.x |
 
@@ -58,6 +59,11 @@ chmod -R 775 storage bootstrap/cache
 npm install
 npm run dev
 ``` 
+### 3. テストの実行
+本プロジェクトでは Pest を使用して自動テストを実装しています。
+```bash
+docker compose exec app php artisan test
+```
 
 ## ディレクトリ構成（主要部分）
 app/
@@ -132,8 +138,21 @@ resources/
 - ファイルアップロード（アバター）は `storage:link` を用いて管理
 - ローカル環境での再現性を意識したセットアップ手順を用意
 
-## 今後の改善予定
+---
 
+### テストコードによる品質担保 (Pest)
+
+- **Feature Test**: 認証、Todo の CRUD、管理者権限、検索ロジックなど、全 33 項目のテストを実装し、機能の正常動作を担保しています。
+- **認可のテスト**: `actingAs` を用いて、自分以外の Todo を削除・編集できないことや、一般ユーザーが管理画面にアクセスできないことを厳密に検証しています。
+
+---
+
+### UI/UX とエラーハンドリング
+
+- **Empty State の考慮**: タスクが 0 件の際に、単に空のテーブルを出すのではなく「現在タスクはありません」というメッセージと登録を促す案内を表示し、ユーザー迷わせない設計を行っています。
+- **操作性の集約**: 一覧画面での「詳細・編集・削除」ボタンを 1 カラムに集約。Flexbox を用いて中央配置し、視認性と誤操作防止を両立させています。
+## 今後の改善予定
 - 問い合わせフォーム（メール送信）
 - 管理者向けシステム通知機能
-
+- Todo 期限の通知（リマインダー）機能
+- カテゴリ別の進捗グラフ表示

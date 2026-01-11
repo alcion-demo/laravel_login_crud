@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Enums\TodoStatus;
 use App\Enums\TodoPriority;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Todo extends Model
 {
+    use HasFactory;
+
     protected $casts = [
-        'status' => 'integer',   // 数値のまま扱う
-        'priority' => 'integer', // ← Enum ではなく int にする
+        'status' => 'integer',
+        'priority' => 'integer', 
+        'day_of_week' => Weekday::class,
     ];
 
     protected $fillable = [
