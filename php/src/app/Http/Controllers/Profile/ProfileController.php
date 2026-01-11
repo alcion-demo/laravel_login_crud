@@ -75,4 +75,15 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.edit')->with('status', 'プロフィールを更新しました！');
     }
+
+    public function destroyAvatar(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+            $user->avatar_path = null;
+            $user->save();
+        }
+        return back()->with('status', 'アバターを削除しました。');
+    }
 }

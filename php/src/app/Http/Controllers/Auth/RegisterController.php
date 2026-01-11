@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Http\Requests\Auth\RegisterRequest;
 
 class RegisterController extends Controller
 {
@@ -26,7 +27,7 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
