@@ -67,13 +67,65 @@ docker compose exec app php artisan test
 
 ## ディレクトリ構成（主要部分）
 app/
-├── Models/             # Eloquentモデル（データの定義とリレーション）
-├── Http/Controllers/   # リクエストの橋渡し（Thin Controller）
-├── Services/           # 【重要】複雑な計算やビジネスロジックの集約
-└── Http/Middleware/    # 管理者権限（Admin）などのアクセス制限
-resources/
-├── views/              # Bladeテンプレート（UI）
-└── js/css/             # TailwindCSS / Alpine.js のソースファイル
+├── Models/             # Eloquentモデル（データの定義とリレーション）  
+├── Http/Controllers/   # リクエストの橋渡し（Thin Controller）  
+├── Services/           # 【重要】複雑な計算やビジネスロジックの集約  
+└── Http/Middleware/    # 管理者権限（Admin）などのアクセス制限  
+resources/  
+├── views/              # Bladeテンプレート（UI）  
+└── js/css/             # TailwindCSS / Alpine.js のソースファイル  
+
+## アーキテクチャ構成図（自作認証フロー）
+
+あえて Jetstream 等のスターターキットを使わず、Laravelの標準機能を組み合わせて「認証の仕組み」を自作しました。
+```mermaid
+graph TD
+    subgraph Frontend
+        Blade["Blade Templates"]
+    end
+
+    subgraph Logic ["自作ロジック"]
+        Controller["LoginController / AuthController"]
+        Guard["Session Guard (認証判定)"]
+        Middleware["AdminMiddleware (管理者制限)"]
+    end
+
+    subgraph Data
+        DB[(Database)]
+    end
+
+    Blade -->|入力| Controller
+    Controller -->|照合| Guard
+    Guard -->|ユーザー確認| DB
+    Controller -->|役割チェック| Middleware
+    Middleware -->|許可| AdminPage[管理者専用ページ]
+```
+
+## データベース設計（ER図)
+```mermaid
+erDiagram
+    USERS ||--o{ TODOS : creates
+    TODOS }|..|{ TAGS : categorizes
+    USERS {
+        bigint id
+        string name
+        string email
+        string password
+        boolean is_admin
+    }
+    TODOS {
+        bigint id
+        string title
+        text description
+        datetime deadline
+        string status
+    }
+    TAGS {
+        bigint id
+        string name
+    }
+
+```
 
 ## 設計・実装の特徴
 
