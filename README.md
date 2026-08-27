@@ -207,4 +207,9 @@ erDiagram
 - 問い合わせフォーム（メール送信）
 - 管理者向けシステム通知機能
 - Todo 期限の通知（リマインダー）機能
-- カテゴリ別の進捗グラフ表示
+- カテゴリ別の進捗グラフ表示  
+
+[![Loom Video](https://img.shields.io/badge/Demo_Video-Loom-625DF5?style=for-the-badge&logo=loom)](https://www.loom.com/share/39baafaf5ed947d5986a43b5b6a2ca8c)
+
+[▶️ 動作デモ動画を視聴する（Loom）](https://www.loom.com/embed/39baafaf5ed947d5986a43b5b6a2ca8c)
+
